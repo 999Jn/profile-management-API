@@ -3,9 +3,12 @@ from rest_framework import generics,status,views,permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .serializers import RegisterSerializer,LoginSerializer,LogoutSerializer
+from .serializers import RegisterSerializer,LoginSerializer,LogoutSerializer,ProfileSerializer
+from .models import Profile
 
-# Create your views here.
+
+
+
 
 class RegisterView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
@@ -32,3 +35,10 @@ class LogoutAPIView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ProfileSerializer
+
+    def get_object(self):
+        return self.request.user.profile
